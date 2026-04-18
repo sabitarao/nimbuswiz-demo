@@ -68,7 +68,7 @@ export default function FirstRunSetup() {
         <div>
           <h2 className="text-2xl font-semibold mb-2">{headlineCopy}</h2>
           <p className="text-blue-100">
-            See stability insights in under 3 minutes—try our demo or connect your first system
+            See stability insights in under 3 minutes — try demo data or add your first system
           </p>
         </div>
         <button
@@ -120,7 +120,7 @@ export default function FirstRunSetup() {
               to="/systems"
               className="flex items-center gap-2 px-6 py-3 bg-blue-700 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium border border-blue-500"
             >
-              Register Your First System
+              Register a system
             </Link>
           </>
         ) : (

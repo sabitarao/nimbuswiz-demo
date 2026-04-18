@@ -202,7 +202,15 @@ export default function Monitoring() {
           <button className="text-sm text-blue-600 hover:text-blue-700">View All</button>
         </div>
         <div className="space-y-3">
-          {alerts.map((alert, index) => (
+          {alerts.length === 0 ? (
+            <div className="py-8 text-center">
+              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-3">
+                <TrendingUp className="w-5 h-5 text-green-600" />
+              </div>
+              <p className="text-sm font-medium text-slate-700">No active alerts.</p>
+              <p className="text-sm text-slate-500 mt-1">Your systems are healthy.</p>
+            </div>
+          ) : alerts.map((alert, index) => (
             <div
               key={index}
               className={`p-4 rounded-lg border ${
@@ -256,6 +264,7 @@ export default function Monitoring() {
       </div>
 
       {/* Predictive Maintenance */}
+
       <div className="bg-white rounded-lg border border-slate-200 p-6">
         <h2 className="text-lg font-semibold text-slate-900 mb-4">Predictive Maintenance Insights</h2>
         <div className="space-y-4">

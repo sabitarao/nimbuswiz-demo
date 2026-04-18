@@ -1,5 +1,6 @@
-import { Search, Filter, Download, AlertCircle, CheckCircle, Lightbulb } from "lucide-react";
+import { Search, Filter, Download, AlertCircle, CheckCircle, Lightbulb, ArrowRight } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router";
 
 const logs = [
   { timestamp: "2026-03-25 14:45:32", level: "ERROR", system: "nimbus-dragon", message: "Legacy adapter initialization failed - deprecated version detected" },
@@ -44,28 +45,24 @@ const suggestedFixes = [
   {
     issue: "System Stability Below Threshold",
     fixes: [
-      "Run comprehensive system scan to identify root cause",
-      "Apply Extended Operation upgrade profile for enhanced stability",
-      "Review and update deprecated dependencies",
-      "Consider temporary capacity increase during peak hours",
+      { label: "Scan nimbus-dragon now", href: "/assessment" },
+      { label: "Apply Extended Operation to nimbus-dragon", href: "/modernization" },
+      { label: "Review deprecated dependencies", href: "/modernization" },
     ],
   },
   {
     issue: "Memory Usage Warning",
     fixes: [
-      "Review application memory allocation settings",
-      "Clear temporary cache and log files",
-      "Optimize query performance to reduce memory overhead",
-      "Schedule memory cleanup during off-peak hours",
+      { label: "View nimbus-stag memory settings", href: "/systems/nimbus-stag" },
+      { label: "View nimbus-eagle memory settings", href: "/systems/nimbus-eagle" },
+      { label: "Schedule cleanup window", href: "/automation" },
     ],
   },
   {
     issue: "Deprecated Dependency",
     fixes: [
-      "Update to latest compatible version via Modernization profile",
-      "Review breaking changes in migration guide",
-      "Test updated dependency in staging environment first",
-      "Plan maintenance window for production upgrade",
+      { label: "Update via Modernization profile", href: "/modernization" },
+      { label: "Run pre-upgrade simulation", href: "/modernization" },
     ],
   },
 ];
@@ -131,9 +128,12 @@ export default function Troubleshooting() {
                     </p>
                   </div>
                 </div>
-                <button className="px-3 py-1 text-sm border border-slate-300 rounded hover:bg-white transition-colors">
-                  View Details
-                </button>
+                <Link
+                  to={`/systems/${issue.affectedSystems[0]}`}
+                  className="px-3 py-1 text-sm border border-slate-300 rounded hover:bg-white transition-colors whitespace-nowrap"
+                >
+                  View {issue.affectedSystems[0]}
+                </Link>
               </div>
             </div>
           ))}
@@ -150,14 +150,18 @@ export default function Troubleshooting() {
                 <Lightbulb className="w-5 h-5 text-blue-600 mt-0.5" />
                 <h3 className="text-sm font-semibold text-slate-900">{suggestion.issue}</h3>
               </div>
-              <ul className="ml-8 space-y-2">
+              <div className="ml-8 flex flex-wrap gap-2">
                 {suggestion.fixes.map((fix, fixIndex) => (
-                  <li key={fixIndex} className="flex items-start gap-2 text-sm text-slate-700">
-                    <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    {fix}
-                  </li>
+                  <Link
+                    key={fixIndex}
+                    to={fix.href}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-blue-300 text-blue-700 text-sm rounded-lg hover:bg-blue-50 transition-colors"
+                  >
+                    {fix.label}
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
                 ))}
-              </ul>
+              </div>
             </div>
           ))}
         </div>

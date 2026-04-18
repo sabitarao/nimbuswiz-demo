@@ -64,7 +64,7 @@ export default function Dashboard() {
               <p className="text-sm text-slate-600">Stability Index</p>
               <InfoTooltip
                 title="Stability Index"
-                description="System health score (0-100). Above 80 is stable. Below 60 needs attention soon."
+                description="System reliability and uptime, scored 0–100. Below 50 indicates high risk; run a scan to investigate."
               />
             </div>
             <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
@@ -233,7 +233,15 @@ export default function Dashboard() {
         <div className="bg-white rounded-lg border border-slate-200 p-6">
           <h2 className="text-lg font-semibold text-slate-900 mb-4">Active Alerts</h2>
           <div className="space-y-3">
-            {alerts.map((alert, index) => (
+            {alerts.length === 0 ? (
+              <div className="py-8 text-center">
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-3">
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                </div>
+                <p className="text-sm font-medium text-slate-700">No active alerts.</p>
+                <p className="text-sm text-slate-500 mt-1">Your systems are healthy.</p>
+              </div>
+            ) : alerts.map((alert, index) => (
               <div
                 key={index}
                 className={`p-4 rounded-lg border ${

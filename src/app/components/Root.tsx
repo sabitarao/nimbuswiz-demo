@@ -55,7 +55,7 @@ export default function Root() {
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <h1 className="text-xl font-bold text-white">NimbusWiz</h1>
-                <p className="text-xs text-slate-400 mt-1">Where Legacy Fleets Meet Muggle Ingenuity</p>
+                <p className="text-xs text-slate-400 mt-1">Modernize your Magic</p>
               </div>
               <button
                 onClick={() => setGlossaryOpen(true)}
@@ -112,7 +112,7 @@ export default function Root() {
               aria-pressed={isDemoMode}
               aria-label={isDemoMode ? 'Demo mode active, click to use real data' : 'Click to use demo data'}
             >
-              {isDemoMode ? '● Demo Mode Active' : 'Try Demo (Your Data Safe)'}
+              {isDemoMode ? '● Demo Mode Active' : 'Try demo — your real data stays safe'}
             </button>
             
             {/* Role Badge */}

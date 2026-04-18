@@ -81,7 +81,7 @@ export default function Deployment() {
             <div className="flex items-center gap-3">
               <button className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2">
                 <RotateCcw className="w-4 h-4" />
-                Rollback
+                Roll back deployment
               </button>
               <span className="inline-flex items-center gap-2 px-3 py-2 bg-blue-100 text-blue-700 rounded-lg">
                 <Clock className="w-4 h-4" />

@@ -1,4 +1,5 @@
-import { Zap, Shield, Clock, CheckCircle, TrendingUp, TrendingDown } from "lucide-react";
+import { Zap, Shield, Clock, CheckCircle, TrendingUp, AlertTriangle, Play, Loader2 } from "lucide-react";
+import { useState } from "react";
 
 const profiles = [
   {
@@ -66,7 +67,22 @@ const profiles = [
   },
 ];
 
+const simChecks = [
+  { name: "Dependency compatibility", status: "passed" as const, message: "All dependencies compatible with target version" },
+  { name: "Disk space available", status: "passed" as const, message: "47.2 GB free — 32.1 GB required" },
+  { name: "Backup verification", status: "passed" as const, message: "Latest backup: 2 hours ago" },
+  { name: "Quirk conflicts", status: "warning" as const, message: "1 quirk detected — will be auto-fixed during upgrade" },
+];
+
 export default function Modernization() {
+  const [simStatus, setSimStatus] = useState<"idle" | "running" | "passed">("idle");
+  const [appliedProfile, setAppliedProfile] = useState<string | null>(null);
+
+  const runSimulation = () => {
+    setSimStatus("running");
+    setTimeout(() => setSimStatus("passed"), 2500);
+  };
+
   return (
     <div className="p-8 space-y-6">
       {/* Header */}
@@ -189,18 +205,102 @@ export default function Modernization() {
               </div>
 
               {/* Action Button */}
-              <button
-                className={`w-full py-2.5 rounded-lg font-medium transition-colors ${
-                  profile.recommended
-                    ? "bg-blue-600 text-white hover:bg-blue-700"
-                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                }`}
-              >
-                Apply {profile.name} Profile
-              </button>
+              {appliedProfile === profile.id ? (
+                <div className="w-full py-2.5 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm font-medium flex items-center justify-center gap-2">
+                  <CheckCircle className="w-4 h-4" />
+                  {profile.name} Profile Applied
+                </div>
+              ) : simStatus === "passed" ? (
+                <button
+                  onClick={() => setAppliedProfile(profile.id)}
+                  className={`w-full py-2.5 rounded-lg font-medium transition-colors ${
+                    profile.recommended
+                      ? "bg-blue-600 text-white hover:bg-blue-700"
+                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  }`}
+                >
+                  Apply {profile.name} Profile
+                </button>
+              ) : (
+                <button
+                  disabled
+                  title="Run the simulation below first"
+                  className="w-full py-2.5 rounded-lg font-medium bg-slate-100 text-slate-400 cursor-not-allowed"
+                >
+                  Apply {profile.name} Profile
+                </button>
+              )}
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Simulation Checkpoint */}
+      <div
+        className={`rounded-lg border-2 p-6 transition-colors ${
+          simStatus === "passed" ? "border-green-300 bg-green-50" : "border-slate-200 bg-slate-50"
+        }`}
+      >
+        {simStatus === "passed" ? (
+          <div className="flex items-center gap-3">
+            <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-green-900">
+                Simulation passed — 1 quirk auto-fixed, safe to proceed
+              </p>
+              <p className="text-xs text-green-700 mt-0.5">Select a profile above and apply when ready.</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div>
+                <h3 className="text-base font-semibold text-slate-900">Before you apply</h3>
+                <p className="text-sm text-slate-600 mt-1">
+                  Run a simulation first. A passing simulation confirms the upgrade is safe to apply.
+                </p>
+              </div>
+              <div className="flex-shrink-0">
+                {simStatus === "running" ? (
+                  <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm border border-blue-200">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Simulating…
+                  </div>
+                ) : (
+                  <button
+                    onClick={runSimulation}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                  >
+                    <Play className="w-4 h-4" />
+                    Run it for me
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Pre-computed safety checks */}
+            <div className="grid grid-cols-2 gap-2">
+              {simChecks.map((check, i) => (
+                <div
+                  key={i}
+                  className={`flex items-start gap-2 p-3 rounded-lg border ${
+                    check.status === "passed" ? "bg-green-50 border-green-200" : "bg-amber-50 border-amber-200"
+                  }`}
+                >
+                  {check.status === "passed" ? (
+                    <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  ) : (
+                    <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                  )}
+                  <div>
+                    <p className="text-xs font-medium text-slate-900">{check.name}</p>
+                    <p className="text-xs text-slate-600 mt-0.5">{check.message}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Detailed Comparison Table */}

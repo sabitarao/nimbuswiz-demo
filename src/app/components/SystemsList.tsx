@@ -194,7 +194,7 @@ export default function SystemsList() {
           onClick={() => setRegisterModalOpen(true)}
         >
           <Plus className="w-5 h-5" />
-          Register System
+          Register a system
         </button>
       </div>
 

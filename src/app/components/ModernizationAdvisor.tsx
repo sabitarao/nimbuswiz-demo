@@ -55,6 +55,9 @@ export default function ModernizationAdvisor() {
   const { getVariantValue } = useABTest();
   const { trackEvent } = useAnalytics();
   const [showPreview, setShowPreview] = useState(false);
+  const [showOverride, setShowOverride] = useState(false);
+  const [overrideOption, setOverrideOption] = useState("Extended Operation");
+  const [overrideReason, setOverrideReason] = useState("");
 
   const ctaCopy = getVariantValue<string>('cta-apply-upgrade');
   const badgeCopy = getVariantValue<string>('recommendation-badge');
@@ -121,15 +124,23 @@ export default function ModernizationAdvisor() {
                   <p className="text-sm text-blue-200">Recommendation Confidence</p>
                   <InfoTooltip
                     title="Confidence Score"
-                    description="How certain we are this upgrade will succeed. 90%+ is very safe. 75-89% is safe for most systems."
+                    description="How much data the Advisor has available. Below 60% means it needs more scans or a Flight Profile to improve its recommendation."
                   />
                 </div>
                 <div className="flex items-center gap-2 mt-1">
-                  <div className="w-32 h-2 bg-blue-800 rounded-full">
+                  <div className="relative w-32 h-2 bg-blue-800 rounded-full">
                     <div className="w-[87%] h-full bg-white rounded-full" />
+                    {/* 90% threshold marker */}
+                    <div className="absolute top-1/2 -translate-y-1/2 w-0.5 h-4 bg-yellow-300 opacity-80" style={{ left: "90%" }} />
                   </div>
                   <span className="text-lg font-semibold">87%</span>
                 </div>
+                <button
+                  onClick={handlePreview}
+                  className="mt-1 text-xs text-blue-200 hover:text-white underline underline-offset-2"
+                >
+                  What would raise this?
+                </button>
               </div>
               <div>
                 <p className="text-sm text-blue-200">Affected Systems</p>
@@ -150,6 +161,61 @@ export default function ModernizationAdvisor() {
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
+      </div>
+
+      {/* Override recommendation */}
+      <div>
+        {!showOverride ? (
+          <button
+            onClick={() => setShowOverride(true)}
+            className="text-sm text-slate-500 hover:text-slate-700 underline underline-offset-2"
+          >
+            Disagree with this recommendation?
+          </button>
+        ) : (
+          <div className="bg-white border border-slate-200 rounded-lg p-5">
+            <h4 className="text-sm font-semibold text-slate-900 mb-3">Override to a different path</h4>
+            <div className="mb-3">
+              <select
+                value={overrideOption}
+                onChange={(e) => setOverrideOption(e.target.value)}
+                className="px-3 py-1.5 border border-slate-300 rounded-lg text-sm text-slate-900"
+              >
+                <option>Extended Operation</option>
+                <option>Partial Modernization</option>
+                <option>Replace (Nimbus2026)</option>
+              </select>
+            </div>
+            <input
+              type="text"
+              placeholder="Reason (saved to audit log)"
+              value={overrideReason}
+              onChange={(e) => setOverrideReason(e.target.value)}
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm mb-3"
+            />
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  if (overrideReason.trim()) {
+                    showToast("success", `Override to ${overrideOption} saved to audit log`);
+                    setShowOverride(false);
+                    setOverrideReason("");
+                  }
+                }}
+                disabled={!overrideReason.trim()}
+                className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Save override to audit
+              </button>
+              <button
+                onClick={() => { setShowOverride(false); setOverrideReason(""); }}
+                className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Options Comparison */}
@@ -181,10 +247,13 @@ export default function ModernizationAdvisor() {
                 <span className="text-sm font-medium text-slate-900">Low</span>
               </div>
             </div>
-            <div className="pt-3 border-t border-blue-200">
+            <div className="pt-3 border-t border-blue-200 space-y-2">
               <p className="text-xs text-slate-600">
                 <strong>Best for:</strong> Stable systems with predictable behavior
               </p>
+              <div className="p-2 bg-blue-100 rounded text-xs text-blue-900">
+                <span className="font-medium">Why this scores high:</span> Usage Patterns (40% weight) — 90-day load profile shows stable, predictable demand with no drift anomalies.
+              </div>
             </div>
           </div>
 
@@ -210,10 +279,13 @@ export default function ModernizationAdvisor() {
                 <span className="text-sm font-medium text-slate-900">Medium</span>
               </div>
             </div>
-            <div className="pt-3 border-t border-slate-200">
+            <div className="pt-3 border-t border-slate-200 space-y-2">
               <p className="text-xs text-slate-600">
                 <strong>Best for:</strong> Complex systems with high dependency chains
               </p>
+              <div className="p-2 bg-slate-100 rounded text-xs text-slate-700">
+                <span className="font-medium">Why this is limited:</span> Dependency Risks (25% weight) — 8 interdependencies detected. Full upgrade carries too much chain risk.
+              </div>
             </div>
           </div>
 
@@ -239,10 +311,13 @@ export default function ModernizationAdvisor() {
                 <span className="text-sm font-medium text-slate-900">High</span>
               </div>
             </div>
-            <div className="pt-3 border-t border-slate-200">
+            <div className="pt-3 border-t border-slate-200 space-y-2">
               <p className="text-xs text-slate-600">
                 <strong>Best for:</strong> Systems beyond viable modernization
               </p>
+              <div className="p-2 bg-red-50 rounded text-xs text-red-800">
+                <span className="font-medium">Why this is high risk:</span> System Quirks (35% weight) — 14 behavioral anomalies exceed the upgrade compatibility threshold.
+              </div>
             </div>
           </div>
         </div>
