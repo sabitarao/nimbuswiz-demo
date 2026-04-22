@@ -23,12 +23,12 @@ export default function Tooltip({ content, children, icon = false }: TooltipProp
       </div>
       
       {isVisible && (
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50">
           <div className="bg-slate-900 text-white text-xs rounded-lg px-3 py-2 max-w-xs shadow-lg">
-            {content}
-            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px">
-              <div className="border-8 border-transparent border-t-slate-900" />
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-[-1px]">
+              <div className="border-8 border-transparent border-b-slate-900" />
             </div>
+            {content}
           </div>
         </div>
       )}
